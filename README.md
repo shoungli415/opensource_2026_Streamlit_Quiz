@@ -18,5 +18,8 @@ PW: 1234
 ## 실행 방법
 
 ```bash
-pip install -r requirements.txt
-streamlit run app.py
+git clone https://github.com/shoungli415/opensource_2026_Streamlit_Quiz.git
+cd opensource_2026_Streamlit_Quiz
+python -m pip install -r requirements.txt
+python -m streamlit run app.py
+```
