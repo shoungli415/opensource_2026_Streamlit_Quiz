@@ -34,7 +34,9 @@ def scroll_to_top():
                             target.scrollTo(0, 0);
                         } else {
                             target.scrollTop = 0;
-                            target.scrollTo({ top: 0, left: 0, behavior: "auto" });
+                            target.scrollTo(
+                                { top: 0, left: 0, behavior: "auto" }
+                            );
                         }
                     } catch (e) {}
                 });
