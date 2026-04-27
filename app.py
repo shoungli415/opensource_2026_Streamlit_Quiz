@@ -1,10 +1,56 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from ui_styles import inject_custom_css
 from views import login_view, quiz_view, short_quiz_view
 from data_provider import get_quiz_questions, get_short_answer_questions
 
 st.set_page_config(page_title="배틀그라운드 모의고사", layout="centered")
 inject_custom_css()
+
+
+def scroll_to_top():
+    components.html(
+        """
+        <script>
+            function forceScrollTop() {
+                const doc = window.parent.document;
+
+                // 여러 Streamlit 버전에서 가능한 스크롤 컨테이너 후보들
+                const scrollTargets = [
+                    window.parent,
+                    doc.documentElement,
+                    doc.body,
+                    doc.querySelector('section.main'),
+                    doc.querySelector('.main'),
+                    doc.querySelector('[data-testid="stAppViewContainer"]'),
+                    doc.querySelector('[data-testid="stMain"]')
+                ];
+
+                scrollTargets.forEach((target) => {
+                    if (!target) return;
+
+                    try {
+                        if (target === window.parent) {
+                            target.scrollTo(0, 0);
+                        } else {
+                            target.scrollTop = 0;
+                            target.scrollTo({ top: 0, left: 0, behavior: "auto" });
+                        }
+                    } catch (e) {}
+                });
+            }
+
+            // 페이지가 그려지는 타이밍 차이를 고려해서 여러 번 실행
+            forceScrollTop();
+            setTimeout(forceScrollTop, 50);
+            setTimeout(forceScrollTop, 150);
+            setTimeout(forceScrollTop, 300);
+            setTimeout(forceScrollTop, 600);
+        </script>
+        """,
+        height=0
+    )
+
 
 # 세션 상태 관리
 if "logged_in" not in st.session_state:
@@ -21,6 +67,9 @@ if "current_menu" not in st.session_state:
 
 if "wrong_answers" not in st.session_state:
     st.session_state.wrong_answers = []
+
+if "need_scroll_top" not in st.session_state:
+    st.session_state.need_scroll_top = False
 
 
 # 전체 채점 함수
@@ -76,6 +125,9 @@ if not st.session_state.logged_in:
     login_view()
 
 else:
+    if st.session_state.get("need_scroll_top", False):
+        scroll_to_top()
+        st.session_state.need_scroll_top = False
     # 사이드바 메뉴
     st.sidebar.markdown("### 🎮 전형 선택")
     st.sidebar.caption("응시할 전형을 선택하세요")
@@ -124,6 +176,7 @@ else:
         )
 
         if st.session_state.wrong_count == 0:
+            st.balloons()
             st.success("모든 문제를 맞혔습니다! 완벽합니다.")
         else:
             st.markdown("### 오답 확인")

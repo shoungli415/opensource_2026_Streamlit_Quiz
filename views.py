@@ -81,6 +81,7 @@ def login_view():
     if st.button("시험장 입장", use_container_width=True):
         if user_id == "admin" and user_pw == "1234":
             st.session_state.logged_in = True
+            st.session_state.need_scroll_top = True
             st.rerun()
         else:
             st.error("정보가 일치하지 않습니다.")
